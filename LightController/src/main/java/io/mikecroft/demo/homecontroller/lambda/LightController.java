@@ -6,10 +6,10 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 /**
  * Created by mike on 10/10/17.
  */
-public class LightController implements RequestHandler<String, String> {
+public class LightController implements RequestHandler {
 
     @Override
-    public String handleRequest(String input, Context context) {
+    public String handleRequest(Object input, Context context) {
         return "Received message: " + input;
     }
 }
