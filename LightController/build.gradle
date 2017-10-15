@@ -1,9 +1,24 @@
+import jp.classmethod.aws.gradle.lambda.AWSLambdaMigrateFunctionTask
+import com.amazonaws.services.lambda.model.Runtime
+
 group 'io.mikecroft.demo.homecontroller.lambda'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
+apply plugin: 'jp.classmethod.aws.lambda'
 
 sourceCompatibility = 1.8
+
+// Gradle AWS Plugin
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath "jp.classmethod.aws:gradle-aws-plugin:0.22"
+    }
+}
 
 repositories {
     mavenCentral()
@@ -24,3 +39,19 @@ task buildZip(type: Zip) {
 }
 
 build.dependsOn buildZip
+
+// Gradle AWS Plugin
+aws {
+    profileName = "default"
+    region = "eu-west-1"
+}
+
+task deploy(type: AWSLambdaMigrateFunctionTask, dependsOn: build) {
+    functionName = "LightController"
+    handler = "io.mikecroft.demo.homecontroller.lambda.LightController::handleRequest"
+    role = "arn:aws:iam::${aws.accountId}:role/lambda_light_controller"
+    runtime = Runtime.Java8
+    zipFile = buildZip.archivePath
+    memorySize = 128
+    timeout = 10
+}
