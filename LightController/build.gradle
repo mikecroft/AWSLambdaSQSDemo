@@ -1,5 +1,7 @@
-import jp.classmethod.aws.gradle.lambda.AWSLambdaMigrateFunctionTask
+import com.amazonaws.services.lambda.model.InvocationType
 import com.amazonaws.services.lambda.model.Runtime
+import jp.classmethod.aws.gradle.lambda.AWSLambdaInvokeTask
+import jp.classmethod.aws.gradle.lambda.AWSLambdaMigrateFunctionTask
 
 group 'io.mikecroft.demo.homecontroller.lambda'
 version '1.0-SNAPSHOT'
@@ -54,4 +56,13 @@ task deploy(type: AWSLambdaMigrateFunctionTask, dependsOn: build) {
     zipFile = buildZip.archivePath
     memorySize = 128
     timeout = 10
+}
+
+task invoke(type: AWSLambdaInvokeTask) {
+    functionName = "LightController"
+    invocationType = InvocationType.RequestResponse
+    payload = '{ "msg": "A message from Gradle"}'
+    doLast {
+        println "Lambda function result: " + new String(invokeResult.payload.array(), "UTF-8")
+    }
 }
