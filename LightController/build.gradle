@@ -54,8 +54,8 @@ task deploy(type: AWSLambdaMigrateFunctionTask, dependsOn: build) {
     role = "arn:aws:iam::${aws.accountId}:role/lambda_light_controller"
     runtime = Runtime.Java8
     zipFile = buildZip.archivePath
-    memorySize = 128
-    timeout = 10
+    memorySize = 256
+    timeout = 20
 }
 
 task invoke(type: AWSLambdaInvokeTask) {
